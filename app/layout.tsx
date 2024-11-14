@@ -1,3 +1,5 @@
+import '@/app/ui/global.css';
+import {inter, roboto} from "@/app/ui/fonts";
 export default function RootLayout({
   children,
 }: {
@@ -5,7 +7,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${roboto.className} antialising`}>{children}</body>
     </html>
   );
 }
