@@ -1,10 +1,10 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
-import {roboto} from "@/app/ui/fonts";
+import {inter} from "@/app/ui/fonts";
 
 export function RootLayout({children,}: {children: React.ReactNode;}) {
     return (
     <html lang="en">
-    <body className={`${roboto.className} antialiasing`}>{children}</body>
+    <body className={`${inter.className} antialiasing`}>{children}</body>
     </html>
 )
 }
