@@ -13,6 +13,7 @@ const dataSchema = z.object({
 });
 const CheckInvoice = dataSchema.omit({id : true, date : true});
 export async function createInvoice(formData : FormData) {
+
     const {customerId, amount, status} = CheckInvoice.parse({
         customerId : formData.get("customerId"),
         amount : formData.get("amount"),
@@ -20,8 +21,12 @@ export async function createInvoice(formData : FormData) {
     });
     const amountInCents = amount * 100;
     const currentDate = new Date().toISOString().split('T')[0];
-    await sql`insert into invoices (customer_id,amount,status,date) values (${customerId},${amountInCents},${status}, ${currentDate}) `;
-
+    try {
+        await sql`insert into invoices (customer_id, amount, status, date)
+                    values (${customerId}, ${amountInCents}, ${status}, ${currentDate}) `;
+    } catch (error) {
+        console.log("failed to insert invoice", error);
+    }
     expirePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 }
@@ -33,11 +38,26 @@ export async function updateInvoice(id :string ,formData : FormData) {
         });
     const amountInCents = amount * 100;
     const currentDate = new Date().toISOString().split('T')[0];
-    await sql`update invoices set customer_id=${customerId}, amount=${amountInCents},status = ${status}, date=${currentDate} where id=${id}`;
+    try {
+        await sql`update invoices
+                  set customer_id=${customerId},
+                      amount=${amountInCents},
+                      status     = ${status},
+                      date=${currentDate}
+                  where id = ${id}`;
+    } catch (error) {
+        console.log("failed to update invoice", error);
+    }
     expirePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 }
 export async function deleteInvoice(id :string) {
-    await sql`delete from invoices where id=${id}`;
+    try {
+        await sql`delete
+                  from invoices
+                  where id = ${id}`;
+    } catch (error) {
+        console.log("failed to delete invoice", error);
+    }
     expirePath('/dashboard/invoices');
 }
