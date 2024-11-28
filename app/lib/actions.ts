@@ -37,7 +37,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
         };
     }
 
-    // Prepare data for insertion into the database
+
     const {customerId, amount, status} = validatedFields.data;
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
@@ -55,23 +55,31 @@ export async function createInvoice(prevState: State, formData: FormData) {
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
 }
-export async function updateInvoice(id :string ,formData : FormData) {
-    const {customerId, amount, status} = CheckInvoice.parse({
-        customerId : formData.get("customerId"),
-        amount : formData.get("amount"),
-        status : formData.get("status"),
-        });
+
+export async function updateInvoice(id: string, prevState: State, formData: FormData,) {
+    const validatedFields = CheckInvoice.safeParse({
+        customerId: formData.get('customerId'),
+        amount: formData.get('amount'),
+        status: formData.get('status'),
+    });
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing Fields. Failed to Update Invoice.',
+        };
+    }
+    const {customerId, amount, status} = validatedFields.data;
     const amountInCents = amount * 100;
-    const currentDate = new Date().toISOString().split('T')[0];
     try {
-        await sql`update invoices
-                  set customer_id=${customerId},
-                      amount=${amountInCents},
-                      status     = ${status},
-                      date=${currentDate}
-                  where id = ${id}`;
+        await sql`
+            UPDATE invoices
+            SET customer_id = ${customerId},
+                amount      = ${amountInCents},
+                status      = ${status}
+            WHERE id = ${id}
+        `;
     } catch (error) {
-        console.log("failed to update invoice", error);
+        return {message: 'Database Error: Failed to Update Invoice.'};
     }
     revalidatePath('/dashboard/invoices');
     redirect('/dashboard/invoices');
