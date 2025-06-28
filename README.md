@@ -1,4 +1,7 @@
-## Next.Js tutorial
+- yarn install
+- then it actually runs
 
-following the following page step by step, hoping to learn how to do the hell that is front end:
-https://nextjs.org/learn?utm_source=next-site&utm_medium=homepage-cta&utm_campaign=home
+just a weird attempt at making a website and learning nextjs, made following the tutorial somewhat loosely
+and the power of hope and imagination touching random things hoping it didnt break completely
+
+if it doesnt run, the power of hope and imagination ran out.
